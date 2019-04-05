@@ -1,22 +1,15 @@
 ﻿using NotificationApi.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using NotificationApi.DatabaseLayer;
 using NotificationApi.Model;
 using Serilog;
-using Serilog.Settings.Configuration;
-using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
+using NotificationApi.Cache;
 
 namespace NotificationApi
 {
@@ -43,6 +36,7 @@ namespace NotificationApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.Configure<DatabaseInfo>((opt) => Configuration.GetSection("DatabaseInfo").Bind(opt));
             services.AddScoped(typeof(IDatabaseAccess<>), typeof(DatabaseAccess<>));
+            services.AddSingleton<CacheLists>();
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "Notification Api", Version = "v1" });
