@@ -103,7 +103,7 @@ namespace NotificationApi.Controllers
             {
                 if(AddSendoutValidation.CheckUserTemplateAndGroupExist(_cachedUsers.Values.ToList(), 
                     _cachedUserGroups.Values.ToList(), _cachedTemplates.Values.ToList(),
-                    sendout))
+                    sendout)) return BadRequest("Please check that User, User Group and Template exist.");
                 await _database.AddItem(sendout);
                 if(!_cache.IsEmpty && 
                     _cache.TryAdd(Convert.ToInt32(sendout.Id), sendout)) 
