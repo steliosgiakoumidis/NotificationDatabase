@@ -34,9 +34,8 @@ namespace NotificationApi
             services.AddDbContext<NotificationServiceContext>(options => 
                 options.UseSqlServer("Server=stelios\\sqlexpress;Database=NotificationService;Trusted_Connection=True;"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.Configure<DatabaseInfo>((opt) => Configuration.GetSection("DatabaseInfo").Bind(opt));
             services.AddScoped(typeof(IDatabaseAccess<>), typeof(DatabaseAccess<>));
-            services.AddSingleton<CacheLists>();
+            services.AddSingleton<CacheDictionaries>();
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "Notification Api", Version = "v1" });

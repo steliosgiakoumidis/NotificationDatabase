@@ -23,7 +23,7 @@ namespace NotificationApi.Controllers
         private ConcurrentDictionary<int, Users> _cachedUsers;
         private ConcurrentDictionary<int, UserGroups> _cachedUserGroups;
 
-        public RegularSendOutController(IDatabaseAccess<RegularSendout> database, CacheLists cache)
+        public RegularSendOutController(IDatabaseAccess<RegularSendout> database, CacheDictionaries cache)
         {
             _database = database;
             _cache = cache.CachedSendouts;

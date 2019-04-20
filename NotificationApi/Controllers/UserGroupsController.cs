@@ -17,7 +17,7 @@ namespace NotificationApi.Controllers
     {
         private IDatabaseAccess<UserGroups> _database;
         private ConcurrentDictionary<int, UserGroups> _cache;
-        public UserGroupsController(IDatabaseAccess<UserGroups> database, CacheLists cache)
+        public UserGroupsController(IDatabaseAccess<UserGroups> database, CacheDictionaries cache)
         {
             _database = database;
             _cache = cache.CachedUserGroups;

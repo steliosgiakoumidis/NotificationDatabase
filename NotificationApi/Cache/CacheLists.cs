@@ -5,7 +5,7 @@ using NotificationApi.Model;
 
 namespace NotificationApi.Cache
 {
-    public class CacheLists
+    public class CacheDictionaries
     {
         public ConcurrentDictionary<int, Users> CachedUsers {get;set;}
             = new ConcurrentDictionary<int, Users>();

@@ -17,7 +17,7 @@ namespace NotificationApi.Controllers
     {
         private IDatabaseAccess<Templates> _database;
         private ConcurrentDictionary<int, Templates> _cache;
-        public TemplateController(IDatabaseAccess<Templates> database, CacheLists cache)
+        public TemplateController(IDatabaseAccess<Templates> database, CacheDictionaries cache)
         {
             _database = database;
             _cache = cache.CachedTemplates;

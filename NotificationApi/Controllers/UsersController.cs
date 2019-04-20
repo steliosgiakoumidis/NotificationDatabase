@@ -21,7 +21,7 @@ namespace NotificationApi.Controllers
         private IDatabaseAccess<Users> _database;
         private ConcurrentDictionary<int, Users> _cache;
 
-        public UsersController(IDatabaseAccess<Users> database, CacheLists cache)
+        public UsersController(IDatabaseAccess<Users> database, CacheDictionaries cache)
         {
             _database = database;
             _cache = cache.CachedUsers;
