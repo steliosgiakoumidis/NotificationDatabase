@@ -29,7 +29,6 @@ namespace NotificationApi.Controllers
             {
                 if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());
                 var response = await _database.GetAllRecords(new Templates());
-                if (response.Count() == 0) return BadRequest("No Templates found");    
                 foreach (var template in response)
                 {
                     if(!_cache.TryAdd(template.Id, template)) 
@@ -77,7 +76,8 @@ namespace NotificationApi.Controllers
                 await _database.DeleteItem(template);
                 if(!_cache.IsEmpty && 
                     _cache.Remove(Convert.ToInt32(template.Id), out cachedTemplate)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when deleting template. Please reload templates");
             }
             catch (Exception ex)
@@ -95,7 +95,8 @@ namespace NotificationApi.Controllers
                 await _database.AddItem(template);
                 if(!_cache.IsEmpty && 
                     _cache.TryAdd(Convert.ToInt32(template.Id), template)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when adding template. Please reload templates");         
             }
             catch (Exception ex) 
@@ -115,7 +116,8 @@ namespace NotificationApi.Controllers
                 if(!_cache.IsEmpty && 
                     _cache.TryGetValue(template.Id, out cachedTemplate) &&
                     _cache.TryUpdate(Convert.ToInt32(template.Id), template, cachedTemplate)) 
-                    return Ok();                
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when editing template. Please reload template");
             }
             catch (Exception ex)

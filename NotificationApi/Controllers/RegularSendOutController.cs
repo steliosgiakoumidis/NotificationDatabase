@@ -38,7 +38,6 @@ namespace NotificationApi.Controllers
             { 
                 if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());               
                 var response = await _database.GetAllRecords(new RegularSendout());
-                if (response.Count() == 0) return BadRequest("No Templates found");    
                 foreach (var sendout in response)
                 {
                     if(!_cache.TryAdd(sendout.Id, sendout)) 
@@ -86,7 +85,8 @@ namespace NotificationApi.Controllers
                 await _database.DeleteItem(sendout);
                 if(!_cache.IsEmpty && 
                     _cache.Remove(Convert.ToInt32(sendout.Id), out cachedSendout)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when deleting sendout. Please reload sendouts");        
             }
             catch (Exception ex)
@@ -107,7 +107,8 @@ namespace NotificationApi.Controllers
                 await _database.AddItem(sendout);
                 if(!_cache.IsEmpty && 
                     _cache.TryAdd(Convert.ToInt32(sendout.Id), sendout)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when adding sendout. Please reload sendouts");             
             }
             catch (Exception ex) 
@@ -127,7 +128,8 @@ namespace NotificationApi.Controllers
                 if(!_cache.IsEmpty && 
                     _cache.TryGetValue(sendout.Id, out cachedSendout) &&
                     _cache.TryUpdate(Convert.ToInt32(sendout.Id), sendout, cachedSendout)) 
-                    return Ok();                
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when editing sendout. Please reload sendouts");           
             }
             catch (Exception ex)

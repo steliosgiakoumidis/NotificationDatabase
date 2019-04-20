@@ -29,10 +29,6 @@ namespace NotificationApi.Controllers
             {
                 if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());
                 var response = await _database.GetAllRecords(new UserGroups());
-                if(response.Count() == 0)
-                {
-                    return BadRequest("No user groups found");
-                }
                 foreach (var userGroup in response)
                 {
                     if(!_cache.TryAdd(userGroup.Id, userGroup))
@@ -81,7 +77,8 @@ namespace NotificationApi.Controllers
                 await _database.DeleteItem(group);
                 if(!_cache.IsEmpty && 
                     _cache.Remove(Convert.ToInt32(group.Id), out cachedGroup)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when deleting user group. Please reload user groups");
             }
             catch (Exception ex)
@@ -100,7 +97,8 @@ namespace NotificationApi.Controllers
                 await _database.AddItem(group);
                 if(!_cache.IsEmpty && 
                     _cache.TryAdd(Convert.ToInt32(group.Id), group)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when adding user group. Please reload user groups");
             }
             catch (Exception ex) 
@@ -121,7 +119,8 @@ namespace NotificationApi.Controllers
                 if(!_cache.IsEmpty && 
                     _cache.TryGetValue(group.Id, out cachedGroup) &&
                     _cache.TryUpdate(Convert.ToInt32(group.Id), group, cachedGroup)) 
-                    return Ok();   
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when editing user group. Please reload user groups");
             }
             catch (Exception ex)

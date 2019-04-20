@@ -33,7 +33,6 @@ namespace NotificationApi.Controllers
             {
                 if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());
                 var response =  await _database.GetAllRecords(new Users());
-                if (response.Count() == 0) return BadRequest("No Users found");    
                 foreach (var user in response)
                 {
                     if(!_cache.TryAdd(user.Id, user)) 
@@ -82,7 +81,8 @@ namespace NotificationApi.Controllers
                 await _database.DeleteItem(user);
                 if(!_cache.IsEmpty && 
                     _cache.Remove(Convert.ToInt32(user.Id), out cachedUser)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when deleting user. Please reload users");
             }
             catch (Exception ex)
@@ -100,7 +100,8 @@ namespace NotificationApi.Controllers
                 await _database.AddItem(user);
                 if(!_cache.IsEmpty && 
                     _cache.TryAdd(Convert.ToInt32(user.Id), user)) 
-                    return Ok(); 
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when adding user. Please reload users");
             }
             catch (Exception ex) 
@@ -120,7 +121,8 @@ namespace NotificationApi.Controllers
                 if(!_cache.IsEmpty && 
                     _cache.TryGetValue(user.Id, out cachedUser) &&
                     _cache.TryUpdate(Convert.ToInt32(user.Id), user, cachedUser)) 
-                    return Ok();                
+                    return Ok();
+                _cache.Clear();
                 return StatusCode(500, "An error may have occured when editing user. Please reload users");
             }
             catch (Exception ex)
