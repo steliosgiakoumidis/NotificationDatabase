@@ -35,7 +35,8 @@ namespace NotificationApi
                 options.UseSqlServer("Server=stelios\\sqlexpress;Database=NotificationService;Trusted_Connection=True;"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped(typeof(IDatabaseAccess<>), typeof(DatabaseAccess<>));
-            services.AddSingleton<CacheDictionaries>();
+            services.AddScoped<CacheDictionaries>();
+            services.AddHealthChecks();
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "Notification Api", Version = "v1" });
@@ -44,6 +45,7 @@ namespace NotificationApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseHealthChecks("/health");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

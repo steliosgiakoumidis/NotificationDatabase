@@ -8,6 +8,6 @@ namespace NotificationApi.Model
         public int Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
-        public string Facebook { get; set; }
+        public string Sms { get; set; }
     }
 }

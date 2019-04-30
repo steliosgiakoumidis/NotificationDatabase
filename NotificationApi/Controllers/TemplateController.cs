@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NotificationApi.Cache;
 using NotificationApi.DatabaseLayer;
 using NotificationApi.Model;
+using NotificationCommon.Models;
 using Serilog;
 
 namespace NotificationApi.Controllers
@@ -16,28 +16,28 @@ namespace NotificationApi.Controllers
     public class TemplateController : ControllerBase
     {
         private IDatabaseAccess<Templates> _database;
-        private ConcurrentDictionary<int, Templates> _cache;
-        public TemplateController(IDatabaseAccess<Templates> database, CacheDictionaries cache)
+        public TemplateController(IDatabaseAccess<Templates> database, CacheDictionaries dictionaries)
         {
+            var instatiated = dictionaries;
             _database = database;
-            _cache = cache.CachedTemplates;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTemplates(){
             try
             {
-                if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());
-                var response = await _database.GetAllRecords(new Templates());
-                foreach (var template in response)
+                if(!CacheDictionaries.CachedTemplates.IsEmpty) return Ok(CacheDictionaries.CachedTemplates.Values.ToList());
+                var records = await _database.GetAllRecords(new Templates());
+                var templatesDto = records.Select(r => DbEntityDtoTransformer.TemplateDbEntityToDto(r));
+                foreach (var template in templatesDto)
                 {
-                    if(!_cache.TryAdd(template.Id, template)) 
+                    if(!CacheDictionaries.CachedTemplates.TryAdd(template.Id, template)) 
                     {
-                        _cache.Clear();
+                        CacheDictionaries.CachedTemplates.Clear();
                         throw new Exception("Caching mechanism failed to load all Users"); 
                     }               
                 }          
-                return Ok(response);
+                return Ok(templatesDto);
             }
             catch (Exception ex)
             {
@@ -52,32 +52,33 @@ namespace NotificationApi.Controllers
         {
             try
             {
-                Templates cachedTemplate;
-                if(!_cache.IsEmpty && 
-                    _cache.TryGetValue(Convert.ToInt32(id), out cachedTemplate)) 
+                Template cachedTemplate;
+                if(!CacheDictionaries.CachedTemplates.IsEmpty &&
+                    CacheDictionaries.CachedTemplates.TryGetValue(Convert.ToInt32(id), out cachedTemplate)) 
                     return Ok(cachedTemplate); 
                 var response = await _database.GetSingleRecord(new Templates(), Convert.ToInt32(id));
                 if (response == null) return BadRequest("User cannot be found");
-                return Ok(response);                 
+                return Ok(DbEntityDtoTransformer.TemplateDbEntityToDto(response));                 
             }
             catch (Exception ex)
             {
                 Log.Error($"An error reaching the db to extract single template." +
                 " Error: "+ ex +" }");
-                return Ok(new Templates());                                
+                return Ok(new Template());                                
             }
         }
 
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteTemplate([FromBody] Templates template){
+        public async Task<IActionResult> DeleteTemplate([FromBody] Template template){
             try
             {
-                Templates cachedTemplate;
-                await _database.DeleteItem(template);
-                if(!_cache.IsEmpty && 
-                    _cache.Remove(Convert.ToInt32(template.Id), out cachedTemplate)) 
+                Template cachedTemplate;
+                await _database.DeleteItem(DbEntityDtoTransformer
+                    .TemplateDtoToDbEntity(template));
+                if(!CacheDictionaries.CachedTemplates.IsEmpty &&
+                    CacheDictionaries.CachedTemplates.Remove(Convert.ToInt32(template.Id), out cachedTemplate)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedTemplates.Clear();
                 return StatusCode(500, "An error may have occured when deleting template. Please reload templates");
             }
             catch (Exception ex)
@@ -89,14 +90,14 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTemplate([FromBody] Templates template){
+        public async Task<IActionResult> AddTemplate([FromBody] Template template){
             try
             {
-                await _database.AddItem(template);
-                if(!_cache.IsEmpty && 
-                    _cache.TryAdd(Convert.ToInt32(template.Id), template)) 
+                await _database.AddItem(DbEntityDtoTransformer.TemplateDtoToDbEntity(template));
+                if(!CacheDictionaries.CachedTemplates.IsEmpty &&
+                    CacheDictionaries.CachedTemplates.TryAdd(Convert.ToInt32(template.Id), template)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedTemplates.Clear();
                 return StatusCode(500, "An error may have occured when adding template. Please reload templates");         
             }
             catch (Exception ex) 
@@ -108,16 +109,16 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditTemplate([FromBody] Templates template){
+        public async Task<IActionResult> EditTemplate([FromBody] Template template){
             try
             {
-                Templates cachedTemplate;
-                await _database.EditItem(template);
-                if(!_cache.IsEmpty && 
-                    _cache.TryGetValue(template.Id, out cachedTemplate) &&
-                    _cache.TryUpdate(Convert.ToInt32(template.Id), template, cachedTemplate)) 
+                Template cachedTemplate;
+                await _database.EditItem(DbEntityDtoTransformer.TemplateDtoToDbEntity(template));
+                if(!CacheDictionaries.CachedTemplates.IsEmpty &&
+                    CacheDictionaries.CachedTemplates.TryGetValue(template.Id, out cachedTemplate) &&
+                    CacheDictionaries.CachedTemplates.TryUpdate(Convert.ToInt32(template.Id), template, cachedTemplate)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedTemplates.Clear();
                 return StatusCode(500, "An error may have occured when editing template. Please reload template");
             }
             catch (Exception ex)

@@ -10,6 +10,7 @@ using NotificationApi.Cache;
 using NotificationApi.Configuration;
 using NotificationApi.DatabaseLayer;
 using NotificationApi.Model;
+using NotificationCommon.Models;
 using Serilog;
 
 namespace NotificationApi.Controllers
@@ -19,29 +20,29 @@ namespace NotificationApi.Controllers
     public class UsersController : ControllerBase
     {
         private IDatabaseAccess<Users> _database;
-        private ConcurrentDictionary<int, Users> _cache;
 
-        public UsersController(IDatabaseAccess<Users> database, CacheDictionaries cache)
+        public UsersController(IDatabaseAccess<Users> database, CacheDictionaries dictionaries)
         {
+            var instatiated = dictionaries;
             _database = database;
-            _cache = cache.CachedUsers;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers(){
             try
             {
-                if(!_cache.IsEmpty) return Ok(_cache.Values.ToList());
-                var response =  await _database.GetAllRecords(new Users());
-                foreach (var user in response)
+                if(!CacheDictionaries.CachedUsers.IsEmpty) return Ok(CacheDictionaries.CachedUsers.Values.ToList());
+                var records =  await _database.GetAllRecords(new Users());
+                var usersDto = records.Select(r => DbEntityDtoTransformer.UserDbEntryToDto(r));
+                foreach (var user in usersDto)
                 {
-                    if(!_cache.TryAdd(user.Id, user)) 
+                    if(!CacheDictionaries.CachedUsers.TryAdd(user.Id, user)) 
                     {
-                        _cache.Clear();
+                        CacheDictionaries.CachedUsers.Clear();
                         throw new Exception("Caching mechanism failed to load all Users"); 
                     }               
                 }          
-                return Ok(response);
+                return Ok(usersDto);
                 
             }
             catch (Exception ex)
@@ -57,13 +58,13 @@ namespace NotificationApi.Controllers
         {
             try
             {
-                Users cachedUser;
-                if(!_cache.IsEmpty && 
-                    _cache.TryGetValue(Convert.ToInt32(id), out cachedUser)) 
+                User cachedUser;
+                if(!CacheDictionaries.CachedUsers.IsEmpty &&
+                    CacheDictionaries.CachedUsers.TryGetValue(Convert.ToInt32(id), out cachedUser)) 
                     return Ok(cachedUser); 
                 var response =  await _database.GetSingleRecord(new Users(), Convert.ToInt32(id));
                 if (response == null) return BadRequest("User cannot be found");
-                return Ok(response);                     
+                return Ok(DbEntityDtoTransformer.UserDbEntryToDto(response));                     
             }
             catch (Exception ex)
             {
@@ -74,15 +75,16 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteUser([FromBody] Users user){
+        public async Task<IActionResult> DeleteUser([FromBody] User user){
             try
             {
-                Users cachedUser;               
-                await _database.DeleteItem(user);
-                if(!_cache.IsEmpty && 
-                    _cache.Remove(Convert.ToInt32(user.Id), out cachedUser)) 
+                User cachedUser;               
+                await _database.DeleteItem(DbEntityDtoTransformer
+                        .UserDtoToDbEntry(user));
+                if(!CacheDictionaries.CachedUsers.IsEmpty &&
+                    CacheDictionaries.CachedUsers.Remove(Convert.ToInt32(user.Id), out cachedUser)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedUsers.Clear();
                 return StatusCode(500, "An error may have occured when deleting user. Please reload users");
             }
             catch (Exception ex)
@@ -94,14 +96,14 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] Users user){
+        public async Task<IActionResult> AddUser([FromBody] User user){
             try
             {
-                await _database.AddItem(user);
-                if(!_cache.IsEmpty && 
-                    _cache.TryAdd(Convert.ToInt32(user.Id), user)) 
+                await _database.AddItem(DbEntityDtoTransformer.UserDtoToDbEntry(user));
+                if(!CacheDictionaries.CachedUsers.IsEmpty &&
+                    CacheDictionaries.CachedUsers.TryAdd(Convert.ToInt32(user.Id), user)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedUsers.Clear();
                 return StatusCode(500, "An error may have occured when adding user. Please reload users");
             }
             catch (Exception ex) 
@@ -113,16 +115,16 @@ namespace NotificationApi.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditUser([FromBody] Users user){
+        public async Task<IActionResult> EditUser([FromBody] User user){
             try
             {
-                Users cachedUser;
-                await _database.EditItem(user);
-                if(!_cache.IsEmpty && 
-                    _cache.TryGetValue(user.Id, out cachedUser) &&
-                    _cache.TryUpdate(Convert.ToInt32(user.Id), user, cachedUser)) 
+                User cachedUser;
+                await _database.EditItem(DbEntityDtoTransformer.UserDtoToDbEntry(user));
+                if(!CacheDictionaries.CachedUsers.IsEmpty &&
+                    CacheDictionaries.CachedUsers.TryGetValue(user.Id, out cachedUser) &&
+                    CacheDictionaries.CachedUsers.TryUpdate(Convert.ToInt32(user.Id), user, cachedUser)) 
                     return Ok();
-                _cache.Clear();
+                CacheDictionaries.CachedUsers.Clear();
                 return StatusCode(500, "An error may have occured when editing user. Please reload users");
             }
             catch (Exception ex)
