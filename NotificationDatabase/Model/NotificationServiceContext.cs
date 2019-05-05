@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace NotificationApi.Model
+namespace NotificationDatabase.Model
 {
     public partial class NotificationServiceContext : DbContext
     {

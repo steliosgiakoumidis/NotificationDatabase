@@ -1,4 +1,4 @@
-namespace NotificationApi.Model
+namespace NotificationDatabase.Model
 {
     public interface IModelBase
     {

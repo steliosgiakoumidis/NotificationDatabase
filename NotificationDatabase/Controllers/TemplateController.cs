@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NotificationApi.Cache;
-using NotificationApi.DatabaseLayer;
-using NotificationApi.Model;
+using NotificationDatabase.Cache;
+using NotificationDatabase.DatabaseLayer;
+using NotificationDatabase.Model;
 using NotificationCommon.Models;
 using Serilog;
 
-namespace NotificationApi.Controllers
+namespace NotificationDatabase.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

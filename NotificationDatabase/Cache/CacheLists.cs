@@ -3,12 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotificationApi.DatabaseLayer;
-using NotificationApi.Model;
+using NotificationDatabase.DatabaseLayer;
+using NotificationDatabase.Model;
 using NotificationCommon.Models;
 using Serilog;
 
-namespace NotificationApi.Cache
+namespace NotificationDatabase.Cache
 {
     public class CacheDictionaries
     {

@@ -1,4 +1,4 @@
-namespace NotificationApi.Configuration
+namespace NotificationDatabase.Configuration
 {
     public class DatabaseInfo
     {

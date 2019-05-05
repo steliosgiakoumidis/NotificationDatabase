@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NotificationApi.Model
+namespace NotificationDatabase.Model
 {
     public partial class Users : IModelBase
     {

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
 
-namespace NotificationApi
+namespace NotificationDatabase
 {
     public class Program
     {

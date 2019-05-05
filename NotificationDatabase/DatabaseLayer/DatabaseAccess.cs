@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NotificationApi.Model;
+using NotificationDatabase.Model;
 
-namespace NotificationApi.DatabaseLayer
+namespace NotificationDatabase.DatabaseLayer
 {
     public class DatabaseAccess<T> : IDatabaseAccess<T> where T : class, IModelBase
     {

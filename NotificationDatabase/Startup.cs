@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using NotificationApi.DatabaseLayer;
-using NotificationApi.Model;
+using NotificationDatabase.DatabaseLayer;
+using NotificationDatabase.Model;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
-using NotificationApi.Cache;
+using NotificationDatabase.Cache;
 
-namespace NotificationApi
+namespace NotificationDatabase
 {
     public class Startup
     {
@@ -51,7 +51,7 @@ namespace NotificationApi
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI( s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Notification api"));
+            app.UseSwaggerUI( s => s.SwaggerEndpoint("/swagger/v1/swagger.json", "Notification Database"));
             app.UseMvc();
 
         }

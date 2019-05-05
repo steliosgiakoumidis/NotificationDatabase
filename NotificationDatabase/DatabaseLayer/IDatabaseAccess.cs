@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace NotificationApi.DatabaseLayer
+namespace NotificationDatabase.DatabaseLayer
 {
     public interface IDatabaseAccess<T>
     {

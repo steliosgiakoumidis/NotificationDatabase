@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using NotificationApi.Model;
+using NotificationDatabase.Model;
 using NotificationCommon.Models;
 
-namespace NotificationApi.Utilities
+namespace NotificationDatabase.Utilities
 {
     public class AddSendoutValidation
     {
