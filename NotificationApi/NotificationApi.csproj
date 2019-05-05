@@ -25,4 +25,9 @@
       <HintPath>..\..\..\NotificationCommon\NotificationCommon\bin\Debug\netstandard2.0\NotificationCommon.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

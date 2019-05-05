@@ -1,13 +1,9 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 using NotificationApi.Cache;
-using NotificationApi.Configuration;
 using NotificationApi.DatabaseLayer;
 using NotificationApi.Model;
 using NotificationCommon.Models;
