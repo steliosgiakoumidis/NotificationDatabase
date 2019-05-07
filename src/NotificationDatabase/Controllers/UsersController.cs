@@ -95,9 +95,8 @@ namespace NotificationDatabase.Controllers
         public async Task<IActionResult> AddUser([FromBody] User user){
             try
             {
-                await _database.AddItem(DbEntityDtoTransformer.UserDtoToDbEntry(user));
-                if(!CacheDictionaries.CachedUsers.IsEmpty &&
-                    CacheDictionaries.CachedUsers.TryAdd(Convert.ToInt32(user.Id), user)) 
+                user.Id = await _database.AddItem(DbEntityDtoTransformer.UserDtoToDbEntry(user));
+                if(CacheDictionaries.CachedUsers.TryAdd(Convert.ToInt32(user.Id), user)) 
                     return Ok();
                 CacheDictionaries.CachedUsers.Clear();
                 return StatusCode(500, "An error may have occured when adding user. Please reload users");

@@ -93,9 +93,8 @@ namespace NotificationDatabase.Controllers
         public async Task<IActionResult> AddTemplate([FromBody] Template template){
             try
             {
-                await _database.AddItem(DbEntityDtoTransformer.TemplateDtoToDbEntity(template));
-                if(!CacheDictionaries.CachedTemplates.IsEmpty &&
-                    CacheDictionaries.CachedTemplates.TryAdd(Convert.ToInt32(template.Id), template)) 
+                template.Id = await _database.AddItem(DbEntityDtoTransformer.TemplateDtoToDbEntity(template));
+                if(CacheDictionaries.CachedTemplates.TryAdd(Convert.ToInt32(template.Id), template)) 
                     return Ok();
                 CacheDictionaries.CachedTemplates.Clear();
                 return StatusCode(500, "An error may have occured when adding template. Please reload templates");         

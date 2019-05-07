@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,6 @@ using NotificationDatabase.Cache;
 using NotificationDatabase.DatabaseLayer;
 using NotificationDatabase.Model;
 using NotificationDatabase.Utilities;
-using NotificationCommon;
 using NotificationCommon.Models;
 using Serilog;
 
@@ -101,13 +99,15 @@ namespace NotificationDatabase.Controllers
         {
             try
             {
-                if (!AddSendoutValidation.CheckUserTemplateAndGroupExist(CacheDictionaries.CachedUsers.Values.ToList(),
-                    CacheDictionaries.CachedUserGroups.Values.ToList(), CacheDictionaries.CachedTemplates.Values.ToList(),
+                if (!AddSendoutValidation.CheckUserTemplateAndGroupExist(
+                    CacheDictionaries.CachedUsers.Values.ToList(),
+                    CacheDictionaries.CachedUserGroups.Values.ToList(), 
+                    CacheDictionaries.CachedTemplates.Values.ToList(),
                     sendout)) return BadRequest("Please check that User, User Group and Template exist.");
-                await _database.AddItem(DbEntityDtoTransformer.SendoutDtoToDbEntity(sendout));
+                sendout.Id = await _database
+                                        .AddItem(DbEntityDtoTransformer.SendoutDtoToDbEntity(sendout));
                 Log.Error("Add sendout succeeded database");
-                if (!CacheDictionaries.CachedSendouts.IsEmpty &&
-                    CacheDictionaries.CachedSendouts.TryAdd(sendout.Id, sendout))
+                if (CacheDictionaries.CachedSendouts.TryAdd(sendout.Id, sendout))
                     return Ok();
                 CacheDictionaries.CachedSendouts.Clear();
                 return StatusCode(500, "An error may have occured when adding sendout. Please reload sendouts");

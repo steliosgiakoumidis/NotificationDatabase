@@ -97,9 +97,8 @@ namespace NotificationDatabase.Controllers
         {
             try
             {
-                await _database.AddItem(DbEntityDtoTransformer.UserGroupDtoToDbEntry(group));
-                if (!CacheDictionaries.CachedUserGroups.IsEmpty &&
-                    CacheDictionaries.CachedUserGroups.TryAdd(Convert.ToInt32(group.Id), group))
+                group.Id = await _database.AddItem(DbEntityDtoTransformer.UserGroupDtoToDbEntry(group));
+                if (CacheDictionaries.CachedUserGroups.TryAdd(Convert.ToInt32(group.Id), group))
                     return Ok();
                 CacheDictionaries.CachedUserGroups.Clear();
                 return StatusCode(500, "An error may have occured when adding user group. Please reload user groups");

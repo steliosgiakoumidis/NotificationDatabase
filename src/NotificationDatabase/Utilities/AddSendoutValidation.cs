@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using NotificationDatabase.Model;
 using NotificationCommon.Models;
 
 namespace NotificationDatabase.Utilities

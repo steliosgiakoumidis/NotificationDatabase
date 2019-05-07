@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +12,12 @@ namespace NotificationDatabase.DatabaseLayer
         {
             _context = context;
         }
-        public async Task AddItem(T item)
+        public async Task<int> AddItem(T item)
         {
             _context.Set<T>().Add(item);
             await _context.SaveChangesAsync();
+            
+            return _context.Set<T>().Max(x => x.Id);
         }
 
         public async Task DeleteItem(T item)
