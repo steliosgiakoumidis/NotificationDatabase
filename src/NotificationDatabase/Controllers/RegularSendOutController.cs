@@ -18,9 +18,8 @@ namespace NotificationDatabase.Controllers
     public class RegularSendOutController : ControllerBase
     {
         private IDatabaseAccess<RegularSendout> _database;
-        public RegularSendOutController(IDatabaseAccess<RegularSendout> database, CacheDictionaries dictionaries)
+        public RegularSendOutController(IDatabaseAccess<RegularSendout> database)
         {
-            var instantiated = dictionaries;
             _database = database;
         }
 

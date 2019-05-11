@@ -16,9 +16,8 @@ namespace NotificationDatabase.Controllers
     public class UserGroupsController : ControllerBase
     {
         private IDatabaseAccess<UserGroups> _database;
-        public UserGroupsController(IDatabaseAccess<UserGroups> database, CacheDictionaries dictionaries)
+        public UserGroupsController(IDatabaseAccess<UserGroups> database)
         {
-            var instatiated = dictionaries;
             _database = database;
         }
 

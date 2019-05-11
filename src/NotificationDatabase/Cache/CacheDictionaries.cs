@@ -32,10 +32,14 @@ namespace NotificationDatabase.Cache
             _dbTemplates = dbTemplates;
             _dbUserGroups = dbUserGroups;
             _dbUsers = dbUsers;
-            if (CachedSendouts.IsEmpty) PopulateSendoutsDictionary().Wait();
-            if (CachedTemplates.IsEmpty) PopulateTemplatesDictionary().Wait();
-            if (CachedUserGroups.IsEmpty) PopulateUserGroupsDictionary().Wait();
-            if (CachedUsers.IsEmpty) PopulateUsersDictionary().Wait();
+        }
+
+        public async Task Populate()
+        {
+            if (CachedSendouts.IsEmpty) await PopulateSendoutsDictionary();
+            if (CachedTemplates.IsEmpty) await PopulateTemplatesDictionary();
+            if (CachedUserGroups.IsEmpty) await PopulateUserGroupsDictionary();
+            if (CachedUsers.IsEmpty) await PopulateUsersDictionary();
         }
 
         private async Task PopulateUsersDictionary()

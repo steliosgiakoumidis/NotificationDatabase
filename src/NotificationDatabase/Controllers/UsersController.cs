@@ -17,9 +17,8 @@ namespace NotificationDatabase.Controllers
     {
         private IDatabaseAccess<Users> _database;
 
-        public UsersController(IDatabaseAccess<Users> database, CacheDictionaries dictionaries)
+        public UsersController(IDatabaseAccess<Users> database)
         {
-            var instatiated = dictionaries;
             _database = database;
         }
 

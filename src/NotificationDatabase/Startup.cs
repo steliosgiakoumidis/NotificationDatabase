@@ -9,6 +9,8 @@ using NotificationDatabase.Model;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using NotificationDatabase.Cache;
+using NotificationDatabase.StartupTasks.Plumbing;
+using NotificationDatabase.StartUpTasks;
 
 namespace NotificationDatabase
 {
@@ -39,7 +41,9 @@ namespace NotificationDatabase
             services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "Notification Api", Version = "v1" });
-                });        }
+                });
+            services.AddStartupTask<LoadCacheStartUpTask>();
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
