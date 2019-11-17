@@ -12,7 +12,7 @@ namespace NotificationDatabase.Utilities
         {
             var userExists = users.Select( x => x.Username).Contains(sendout.Username);
             var groupExists = groups.Select( x => x.GroupName).Contains(sendout.UserGroup);
-            var templateExists = templates.Select( x => x.NotificationName).Contains(sendout.ReminderName);
+            var templateExists = templates.Select( x => x.NotificationName).Contains(sendout.TemplateName);
             if (sendout.UserGroup != null &&
                 groupExists &&
                 templateExists) return true;

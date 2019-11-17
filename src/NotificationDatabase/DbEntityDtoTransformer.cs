@@ -14,7 +14,7 @@ namespace NotificationDatabase
         {
             return new Sendout(dbEntitiesList.Id, dbEntitiesList.ReminderName, dbEntitiesList.StartDate, dbEntitiesList.RepetitionFrequency.RepetitionFrequencyStringToEnum(),
                 dbEntitiesList.ExecutionTime.ExecutionTimeStingToEnum(), dbEntitiesList.DayOfTheWeek.DayOfTheWeekStingToEnum(),
-                dbEntitiesList.LastRunAt, dbEntitiesList.Parameters, dbEntitiesList.Username, dbEntitiesList.UserGroup);
+                dbEntitiesList.LastRunAt, dbEntitiesList.Parameters, dbEntitiesList.Username, dbEntitiesList.UserGroup, dbEntitiesList.TemplateName);
         }
         public static RegularSendout SendoutDtoToDbEntity(Sendout sendoutDto)
         {
@@ -29,7 +29,8 @@ namespace NotificationDatabase
                 LastRunAt = sendoutDto.LastRunAt,
                 Parameters = sendoutDto.Parameters,
                 UserGroup = sendoutDto.UserGroup,
-                Username = sendoutDto.Username
+                Username = sendoutDto.Username,
+                TemplateName= sendoutDto.TemplateName
             };
         }
         public static Template TemplateDbEntityToDto(Templates template)

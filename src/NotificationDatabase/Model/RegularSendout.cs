@@ -15,5 +15,6 @@ namespace NotificationDatabase.Model
         public string Parameters { get; set; }
         public string Username { get; set; }
         public string UserGroup { get; set; }
+        public string TemplateName { get; set; }
     }
 }
